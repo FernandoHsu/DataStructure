@@ -143,39 +143,54 @@ public:
     }
     
 };
+//-------------------------------------------------------------------------------------------
 
+struct x{
+    int coef;
+    int pow;
+};
+
+void getValue(vector<x>& v){
+    while (1) {
+        x input;
+        cin >> input.coef >> input.pow;
+        if (input.pow<0) {
+            break;
+        }
+        v.push_back(input);
+    }
+};
+
+void combine_duplicate(vector<x>& v){
+    
+    
+};
+
+void add(vector<x>& p1, vector<x>& p2, vector<x>& ans){
+    
+    
+};
+
+void show_result(vector<x>& v){
+    
+    
+};
 
 int main(int argc, const char * argv[]) {
     
     unsigned int n;
     cin >> n;
-    vector<poly> result;
+    vector<x> p1, p2, ans;
+    vector<vector<x>> result;
     
     for (int i=0; i<n; ++i) {
-        poly p1, p2;
-        int coef, pow;
-        while (1) {
-            cin >> coef >> pow;
-            if (pow<0) {
-                break;
-            }
-            p1.setVal(coef, pow);
-        }
-        //cout << p1;
-        while (1) {
-            cin >> coef >> pow;
-            if (pow<0) {
-                break;
-            }
-            p2.setVal(coef, pow);
-        }
-        //cout << p2;
-        poly ans = p1 + p2;
+        getValue(p1);combine_duplicate(p1);
+        getValue(p2);combine_duplicate(p2);
+        add(p1, p2, ans);
         result.push_back(ans);
-        
     }
     
-    for (int i=0; i<n; ++i) cout << result[i];
+    for (int i=0; i<n; ++i) show_result(result);
 
     return 0;
 }
