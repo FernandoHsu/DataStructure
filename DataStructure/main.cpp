@@ -17,16 +17,13 @@ bool sortPow_Desc(vector<int> x,vector<int> y){
     return x[1] > y[1];
 }
 
-// compare by power
-bool comp(vector<int> x,vector<int> y){
-    return x[1] == y[1];
-}
 
 class poly{
-public:
+private:
     vector<int> coef_pow;
     vector<vector<int>> x;
     
+public:
     poly(){
         //coef_pow.assign(2, 0); // init 2 columns (0, 0) for (coef, pow)
         //x.assign(1, coef_pow); // init n rows
@@ -57,20 +54,29 @@ public:
     
     // operator overload +
     friend poly operator+(const poly &p1, const poly &p2){
-        poly ans;
-        int i,j;
-        set_difference(p1.x.begin(), p1.x.end(), p2.x.begin(), p2.x.end(), inserter(ans.x, ans.x.begin()), comp);
+    
+        // Record if the index of p2 is differnt from p1 or not
+        vector<bool> idx_diff;
+        for (int i=0; i<p2.getSize(); ++i) idx_diff.push_back(true);
         
-        for (i=0; i<p1.getSize(); ++i) {
-            for (j=0; j<p2.getSize(); ++j) {
-                if (p1.getPow(i) == p2.getPow(j)) {
-                    //cout << p1.getPow(i) << "," << p2.getPow(j) << "," << p1.getCoef(i)+p2.getCoef(j) << endl;
-                    ans.setVal(p1.getCoef(i)+p2.getCoef(j), p1.getPow(i));
+        // Find the inner loops elements same with outer loops
+        poly ans = p1;
+        for (int i=0; i<ans.getSize(); ++i) {
+            for (int j=0; j<p2.getSize(); ++j) {
+                if (ans.getPow(i) == p2.getPow(j)) {
+                    ans.chgCoef(ans.getCoef(i)+p2.getCoef(j), ans.getPow(i));
+                    idx_diff[j] = false;
                     break;
                 }
             }
         }
-
+        
+        // Find the inner loops elements different with outer loops
+        for (int i=0; i<p2.getSize(); ++i) {
+            if (idx_diff[i]) {
+                ans.setVal(p2.getCoef(i), p2.getPow(i));
+            }
+        }
 
         return ans;
     };
@@ -80,7 +86,7 @@ public:
         p.sortPoly();
         for (int i=0; i<p.getSize(); ++i) {
             if (p.getCoef(i)==0)    continue;
-            out << " [ " << p.getCoef(i) << " " << p.getPow(i) << " ]";
+            out << "[ " << p.getCoef(i) << " " << p.getPow(i) << " ] ";
         }
         out << endl;
         return out;
@@ -91,6 +97,21 @@ public:
         newX.push_back(c);
         newX.push_back(p);
         x.push_back(newX);
+    };
+    
+    void chgCoef(int c, int p){
+        for (int i=0; i<x.size(); ++i) {
+            if (x[i][1]==p) {
+                x[i][0]=c;
+                return;
+            }
+        }
+        return;
+    };
+    
+    void removeX(int pos){
+        x.erase(x.begin()+pos);
+        return;
     };
     
     int getCoef(int n) const{
@@ -125,31 +146,36 @@ public:
 
 
 int main(int argc, const char * argv[]) {
-    //unsigned int n;
-    //cin >> n;
-    // for i=1~n:
     
-    poly p1, p2;
-    int coef, pow;
-    while (1) {
-        cin >> coef >> pow;
-        if (pow<0) {
-            break;
+    unsigned int n;
+    cin >> n;
+    vector<poly> result;
+    
+    for (int i=0; i<n; ++i) {
+        poly p1, p2;
+        int coef, pow;
+        while (1) {
+            cin >> coef >> pow;
+            if (pow<0) {
+                break;
+            }
+            p1.setVal(coef, pow);
         }
-        p1.setVal(coef, pow);
-    }
-    cout << p1;
-    while (1) {
-        cin >> coef >> pow;
-        if (pow<0) {
-            break;
+        //cout << p1;
+        while (1) {
+            cin >> coef >> pow;
+            if (pow<0) {
+                break;
+            }
+            p2.setVal(coef, pow);
         }
-        p2.setVal(coef, pow);
+        //cout << p2;
+        poly ans = p1 + p2;
+        result.push_back(ans);
+        
     }
-    cout << p2;
-    poly ans = p1 + p2;
-    cout << "ans:\n" << ans;
     
-    
+    for (int i=0; i<n; ++i) cout << result[i];
+
     return 0;
 }
