@@ -42,7 +42,7 @@ void show_result(vector<int>& vec){
     for (int pow=vec.size()-1 ; pow>=0 ; --pow){
         if (vec.at(pow)==0)
             continue;
-        cout << "[" << vec.at(pow) << " " << pow << " ] ";
+        cout << "[ " << vec.at(pow) << " " << pow << " ] ";
     }
     cout << endl;
 };
