@@ -13,32 +13,45 @@
 using namespace std;
 
 struct Polynomial{
-    int coef;
-    int pow;
+    int coef_1 = 0;
+    int coef_2 = 0;
 };
 
-void show_polynomial(vector<Polynomial> &poly){
-    for (auto p : poly)
-        cout << "[ " << p.coef << " " << p.pow << " ] ";
-    cout << endl;
-};
-
-void getValue(vector<Polynomial>& poly, int& MAX){
+void getValue(vector<Polynomial>& poly, int& MaxPow, int n){
     
     while (1) {
-        Polynomial input;
-        cin >> input.coef >> input.pow;
-        if (input.pow<0)
+        int coef, pow;
+        cin >> coef >> pow;
+        
+        if (pow<0)
             break;
-        poly.push_back(input);
-        if (input.pow > MAX)
-            MAX = input.pow;
+        
+        // pow=10, MaxPow=10, Size=11: Idx=0~10
+        // pow=11, MaxPow=10, Size=11: Idx=0~10
+        if (pow>MaxPow) {
+            MaxPow = pow;
+            poly.reserve(MaxPow+1);
+            poly.resize(MaxPow+1);
+        }
+        
+        //cout << "Size:" << poly.size() << "; Capability:" << poly.capacity() << endl;
+        if (n==1) {
+            poly.at(pow).coef_1 += coef;
+        } else {
+            poly.at(pow).coef_2 += coef;
+        }
+
     }
     
 };
 
+void add(vector<Polynomial>& poly, vector<int>& ans){
+    ans.resize(poly.size());
+    for (int pow=0; pow<poly.size(); ++pow)
+        ans.at(pow) = poly.at(pow).coef_1 + poly.at(pow).coef_2;
+};
+
 void show_result(vector<int>& vec){
-    
     for (int pow=vec.size()-1 ; pow>=0 ; --pow){
         if (vec.at(pow)==0)
             continue;
@@ -47,38 +60,26 @@ void show_result(vector<int>& vec){
     cout << endl;
 };
 
-void reconstruct(vector<Polynomial>& tem, vector<int>& poly){
-    for (int pow=0; pow<poly.size(); ++pow) {
-        for (int j=0; j<tem.size(); ++j) {
-            if (pow==tem.at(j).pow)
-                poly.at(pow) += tem.at(j).coef;
-        }
-    }
-    
-};
 
 int main(int argc, const char * argv[]) {
     vector<vector<int>> result;
+    Polynomial polyX;
     unsigned int n;
     cin >> n;
     
     
     for (int i=0; i<n; ++i) {
-        int MAX = -1;
-        vector<Polynomial> tem1, tem2;
+        int MaxSize = 20;
+        int MaxPow = MaxSize+1;
+        vector<Polynomial> poly;
+        poly.reserve(MaxPow);
+        poly.resize(MaxPow);
         
-        getValue(tem1, MAX);//show_polynomial(tem1);
-        getValue(tem2, MAX);//show_polynomial(tem2);
-        MAX += 1;// To record the largest numbers
+        getValue(poly, MaxPow, 1);//show_polynomial(tem1);
+        getValue(poly, MaxPow, 2);//show_polynomial(tem2);
         
-        vector<int>p1, p2, ans;
-        p1.resize(MAX);
-        p2.resize(MAX);
-        ans.resize(MAX);
-        
-        reconstruct(tem1, p1);tem1.clear();
-        reconstruct(tem2, p2);tem2.clear();
-        transform(p1.begin(), p1.end(), p2.begin(), ans.begin(), plus<int>());
+        vector<int> ans;
+        add(poly, ans);
         result.push_back(ans);
         
     }
