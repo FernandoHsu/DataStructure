@@ -11,8 +11,50 @@
 #include <vector>
 using namespace std;
 
+struct node{
+    int existence;
+    node* next;
+};
+
+
+class monkey{
+public:
+    node* first;
+    node* cur;
+    int length=0;
+    
+    monkey(int n){
+        for (int i=1; i<=n; ++i) {
+            node* tem = new node;
+            tem->existence = i;
+            cur->next = tem;
+            tem->next = cur;
+            length++;
+            if (length==1) {
+                first = tem;
+            }
+        }
+    };
+    ~monkey(){
+        while (length>0) {
+            node* tem = cur->next->next;
+            cout << "Delete:" << cur->next->existence << endl;
+            delete  cur->next;
+            cur->next = tem;
+            length--;
+            cout << "length is: " << length << "\n";
+        }
+    };
+    
+    bool pop(node* Node){
+        node* node_to_delete = Node->next;
+        Node->next = node_to_delete->next;
+        delete node_to_delete;
+    };
+};
+
 int main(int argc, const char * argv[]) {
-    unsigned int m, n;
+    int m, n;
     cout << "Input n & m" << endl;
     cin >> n >> m;
     if (m>300) {
@@ -20,28 +62,20 @@ int main(int argc, const char * argv[]) {
         exit(1);
     }
     
-    vector<int> monkey;
-    for (int i=0; i<n; ++i) {
-        monkey.push_back(1);
+    monkey M(n);
+    node* now = M.first;
+    int count=1;
+    while (M.length>1) {
+        now = now->next;
+        count += 1;
+
+        if (count++ == m) {
+            M.pop(now);
+            count = 0;
+        } 
     }
     
-    unsigned int count;
-    n = monkey.size();
-    while (n!=1) {
-        count = 0;
-        for (int i=0; i<n; ++i) {
-            count += 1;
-            if(count == m){
-                cout << "Remove monkey:" << m << endl;
-                monkey.erase(monkey.begin()+m-1);
-                n = monkey.size();
-                cout << "Size of monkey:" << n << endl;
-                break;
-            }
-        }
-    }
     
-    cout << "Final monkey:" << monkey.at(0);
     
     
     return 0;
