@@ -11,9 +11,11 @@
 #include <iostream>
 using namespace std;
 
+
 template <class T>
 class List{
 private:
+    
     T* aList;    // 存储顺序表的实例
     int maxSize; // 顺序表实例的最大长度
     int curLen;  // 顺序表实例的当前长度
